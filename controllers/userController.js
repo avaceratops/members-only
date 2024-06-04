@@ -92,6 +92,7 @@ exports.user_login_get = (req, res) => {
 
 exports.user_login_post = (req, res, next) => {
   const { username } = req.body;
+
   passport.authenticate('local', (err, user, _info) => {
     if (err) return next(err);
     if (!user) {
@@ -101,7 +102,10 @@ exports.user_login_post = (req, res, next) => {
         errors: { password: { msg: 'Invalid username or password' } },
       });
     }
-    return res.redirect('/');
+    return req.login(user, (loginErr) => {
+      if (loginErr) return next(loginErr);
+      return res.redirect('/');
+    });
   })(req, res, next);
 };
 

@@ -15,6 +15,6 @@ block content
           p= message.msg
 
           if currentUser && currentUser.isMember
-            footer.author.mt-2.flex.justify-between.text-sm.text-zinc-500
+            footer.author.mt-2.justify-between.text-sm.text-zinc-500(class='sm:flex')
               span Posted by #{ message.author.fullName }&nbsp;
-              time= message.timestamp_formatted
+              time.block= message.timestamp_formatted

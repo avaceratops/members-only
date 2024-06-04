@@ -10,10 +10,10 @@ html(lang='en')
 
   body
     header.flex.justify-between.bg-white.p-4
-      h1.text-xl.font-bold
+      h1.hidden.text-xl.font-bold(class='sm:block')
         a.text-black(class='hover:text-black', href='/') MessageBoard
 
-      .link-container.flex.gap-6
+      .link-container.flex.w-full.justify-between.gap-6(class='sm:justify-end')
         if currentUser
           p Logged in as&nbsp;
             span.font-semibold #{ currentUser.username }

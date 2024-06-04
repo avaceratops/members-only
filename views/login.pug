@@ -6,8 +6,8 @@ include mixins/submitButton
 block content
   section.mx-auto.flex.max-w-md.rounded-lg.bg-white.p-4
     form.flex.grow.flex-col.gap-8(method='POST')
-      +formField('Username', 'text', 'username', username, errors)(required)
-      +formField('Password', 'password', 'password', password, errors)(
+      +formField('Username', 'text', 'username', user, errors)(required)
+      +formField('Password', 'password', 'password', user, errors)(
         required
       )
 

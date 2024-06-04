@@ -9,6 +9,7 @@ const path = require('path');
 require('dotenv').config();
 
 const indexRouter = require('./routes/index');
+const registerRouter = require('./routes/register');
 
 const app = express();
 app.set('trust proxy', 1); // needed for Railway hosting
@@ -36,6 +37,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/register', registerRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

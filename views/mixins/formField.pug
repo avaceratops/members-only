@@ -1,0 +1,39 @@
+mixin formField(labelText, inputType, inputName, object, errors)
+  label.grow.font-semibold(for=inputName)
+    | #{ labelText }
+
+    if inputType === 'select'
+      select(name=inputName, id=inputName, required!=attributes.required)
+        if block
+          block
+        else
+          option(value='') Default
+
+    else if inputType === 'file'
+      input(type=inputType, name=inputName, id=inputName, accept!=attributes.accept)
+
+    else if inputType === 'textarea'
+      textarea.resize-none.appearance-none(
+        name=inputName,
+        id=inputName,
+        rows='5',
+        required!=attributes.required,
+        minlength!=attributes.minlength
+      )!= attributes.value || (object && object[inputName])
+
+    else
+      input(
+        type=inputType,
+        name=inputName,
+        id=inputName,
+        required!=attributes.required,
+        value!=attributes.value || (object && object[inputName]),
+        minlength!=attributes.minlength,
+        maxlength!=attributes.maxlength,
+        pattern!=attributes.pattern,
+        min!=attributes.min,
+        step!=attributes.step
+      )
+
+    if errors && errors[inputName]
+      span.mt-1.block.text-red-500= errors[inputName].msg

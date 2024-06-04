@@ -12,9 +12,15 @@ html(lang='en')
     header.flex.justify-between.bg-white.p-4
       h1.text-xl.font-bold
         a.text-black(class='hover:text-black', href='/') MessageBoard
+
       .link-container.flex.gap-6
-        a(href='/login') Log in
-        a(href='/register') Register
+        if user
+          p Logged in as&nbsp;
+            span.font-semibold #{ user.username }
+          a(href='/logout') Log out
+        else
+          a(href='/login') Log in
+          a(href='/register') Register
 
     main
       block content

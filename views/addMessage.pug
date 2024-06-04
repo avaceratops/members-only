@@ -1,0 +1,14 @@
+extends layout
+
+include mixins/formField
+include mixins/submitButton
+
+block content
+  section.mx-auto.flex.max-w-md.flex-col.rounded-lg.bg-white.p-4
+    h1.mb-4.text-lg.font-bold Add new message
+
+    form.flex.grow.flex-col.gap-8(method='POST')
+      +formField('Title', 'text', 'title', message, errors)
+      +formField('Message', 'textarea', 'msg', message, errors)(required)
+
+      +submitButton('Add', 'submit', 'blue').col-span-2

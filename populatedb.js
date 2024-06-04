@@ -22,9 +22,9 @@ async function main() {
   mongoose.connection.close();
 }
 
-async function messageCreate(index, title, text) {
+async function messageCreate(index, title, msg) {
   const author = await User.findOne({ username: 'avaceratops' });
-  const message = new Message({ author, title, message: text });
+  const message = new Message({ author, title, msg });
   await message.save();
   messages[index] = message;
   console.log(`Added message: ${title}`);

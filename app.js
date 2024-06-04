@@ -48,7 +48,7 @@ app.use(passport.session());
 // forward logged-in user details to views
 app.use((req, res, next) => {
   if (req.isAuthenticated()) {
-    res.locals.user = req.user;
+    res.locals.currentUser = req.user;
   }
   next();
 });

@@ -14,9 +14,9 @@ html(lang='en')
         a.text-black(class='hover:text-black', href='/') MessageBoard
 
       .link-container.flex.gap-6
-        if user
+        if currentUser
           p Logged in as&nbsp;
-            span.font-semibold #{ user.username }
+            span.font-semibold #{ currentUser.username }
           a(href='/logout') Log out
         else
           a(href='/login') Log in

@@ -8,5 +8,5 @@ exports.message_list = asyncHandler(async (req, res) => {
     .populate('author', 'username forename surname')
     .sort({ timestamp: -1 })
     .exec();
-  res.render('index', { messages });
+  res.render('index', { title: 'MessageBoard', messages });
 });

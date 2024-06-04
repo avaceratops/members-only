@@ -14,7 +14,7 @@ const passwordValidation = (fieldName) =>
     .withMessage('Password does not contain a number');
 
 exports.user_create_get = (req, res) => {
-  res.render('register');
+  res.render('register', { title: 'Register' });
 };
 
 exports.user_create_post = [
@@ -61,6 +61,7 @@ exports.user_create_post = [
 
     if (!errors.isEmpty()) {
       return res.render('register', {
+        title: 'Register',
         user,
         passwordConfirm,
         errors: errors.mapped(),
@@ -73,7 +74,6 @@ exports.user_create_post = [
         user.password = hashedPassword;
         await user.save();
       });
-      res.redirect('/');
     } catch (err) {
       next(err);
     }

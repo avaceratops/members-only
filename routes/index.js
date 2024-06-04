@@ -2,8 +2,8 @@ const express = require('express');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.render('index', { title: 'Members Only' });
-});
+const messageController = require('../controllers/messageController');
+
+router.get('/', messageController.message_list);
 
 module.exports = router;

@@ -5,11 +5,13 @@ const debug = require('debug')('members-only:app');
 const express = require('express');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo');
 const path = require('path');
+const session = require('express-session');
 require('dotenv').config();
 
+const passport = require('./middleware/passport');
 const indexRouter = require('./routes/index');
-const registerRouter = require('./routes/register');
 
 const app = express();
 app.set('trust proxy', 1); // needed for Railway hosting
@@ -29,6 +31,29 @@ async function main() {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+// sessions setup
+app.use(
+  session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      collectionName: 'sessions',
+    }),
+  })
+);
+app.use(passport.session());
+
+// forward logged-in user details to views
+app.use((req, res, next) => {
+  if (req.isAuthenticated()) {
+    res.locals.user = req.user;
+  }
+  next();
+});
+
+// middleware
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -36,8 +61,8 @@ app.use(compression());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// route handlers
 app.use('/', indexRouter);
-app.use('/register', registerRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

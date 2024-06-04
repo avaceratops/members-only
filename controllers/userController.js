@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 
+const passport = require('../middleware/passport');
 const User = require('../models/user');
 
 const passwordValidation = (fieldName) =>
@@ -81,3 +82,25 @@ exports.user_create_post = [
     return res.redirect('/');
   }),
 ];
+
+exports.user_login_get = (req, res) => {
+  if (req.isAuthenticated()) {
+    return res.redirect('/');
+  }
+  return res.render('login', { title: 'Log in' });
+};
+
+exports.user_login_post = (req, res, next) => {
+  passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/login',
+    failureMessage: true,
+  })(req, res, next);
+};
+
+exports.user_logout = (req, res, next) => {
+  req.logout((err) => {
+    if (err) return next(err);
+    return res.redirect('/');
+  });
+};

@@ -1,5 +1,15 @@
-extends layout 
+extends layout
 
-block content 
-  h1(class='text-xl font-bold')= title
-  p.text-slate-600 Welcome to #{title}
+include mixins/anchorButton
+
+block content
+  +anchorButton('Add new message', '', 'blue')
+
+  section.message-container.mt-4.flex.flex-col.gap-6
+    each message in messages
+      article.message-card.bg-white.p-4.shadow-lg
+        h2.font-semibold= message.title
+        p= message.message
+        footer.author.mt-2.flex.justify-between.text-sm.text-zinc-500
+          span Posted by #{ message.author.fullName }&nbsp;
+          time= message.timestamp_formatted

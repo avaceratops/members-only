@@ -10,6 +10,8 @@ block content
       article.message-card.bg-white.p-4.shadow-lg
         h2.font-semibold= message.title
         p= message.message
-        footer.author.mt-2.flex.justify-between.text-sm.text-zinc-500
-          span Posted by #{ message.author.fullName }&nbsp;
-          time= message.timestamp_formatted
+
+        if currentUser && currentUser.isMember
+          footer.author.mt-2.flex.justify-between.text-sm.text-zinc-500
+            span Posted by #{ message.author.fullName }&nbsp;
+            time= message.timestamp_formatted

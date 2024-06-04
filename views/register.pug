@@ -4,33 +4,36 @@ include mixins/formField
 include mixins/submitButton
 
 block content
-  h1.mb-6.text-2xl.font-bold Create an account
+  section.w-fit.rounded-lg.bg-white.p-4
+    h1.mb-4.text-lg.font-bold Create an account
 
-  form.flex.max-w-md.flex-col.gap-8(method='POST')
-    +formField('Username', 'text', 'username', user, errors)(
-      required,
-      minlength=3
-    )
-
-    fieldset.flex.gap-2
-      +formField('First name', 'text', 'forename', user, errors)(required)
-      +formField('Last name', 'text', 'surname', user, errors)(required)
-
-    +formField('Email', 'email', 'email', user, errors)(required)
-
-    fieldset.col-span-2.grid.grid-cols-2.gap-x-2
-      +formField('Password', 'password', 'password', user, errors)(
+    form.flex.max-w-md.flex-col.gap-8(method='POST')
+      +formField('Username', 'text', 'username', user, errors)(
         required,
-        minlength=8,
-        maxlength=32,
-        pattern='(?=.*[0-9])(?=.*[A-Z]).*'
+        minlength=3
       )
-      +formField('Confirm Password', 'password', 'passwordConfirm', { passwordConfirm }, errors)(
-        required,
-        minlength=8,
-        maxlength=32,
-        pattern='(?=.*[0-9])(?=.*[A-Z]).*'
-      )
-      span.col-span-2.mt-1.text-sm Use 8 or more characters, with at least 1 number and 1 uppercase letter
 
-    +submitButton('Create account', 'submit', 'blue').col-span-2
+      fieldset.flex.gap-2
+        +formField('First name', 'text', 'forename', user, errors)(required)
+        +formField('Last name', 'text', 'surname', user, errors)(
+          required
+        )
+
+      +formField('Email', 'email', 'email', user, errors)(required)
+
+      fieldset.col-span-2.grid.grid-cols-2.gap-x-2
+        +formField('Password', 'password', 'password', user, errors)(
+          required,
+          minlength=8,
+          maxlength=32,
+          pattern='(?=.*[0-9])(?=.*[A-Z]).*'
+        )
+        +formField('Confirm Password', 'password', 'passwordConfirm', { passwordConfirm }, errors)(
+          required,
+          minlength=8,
+          maxlength=32,
+          pattern='(?=.*[0-9])(?=.*[A-Z]).*'
+        )
+        span.col-span-2.mt-1.text-sm Use 8 or more characters, with at least 1 number and 1 uppercase letter
+
+      +submitButton('Create account', 'submit', 'blue').col-span-2

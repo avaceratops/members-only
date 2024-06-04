@@ -7,6 +7,9 @@ const userController = require('../controllers/userController');
 
 router.get('/', messageController.message_list);
 
+router.get('/add-message', messageController.message_create_get);
+router.post('/add-message', messageController.message_create_post);
+
 router.get('/register', userController.user_create_get);
 router.post('/register', userController.user_create_post);
 

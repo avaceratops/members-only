@@ -41,3 +41,14 @@ a {
 a:hover {
   @apply text-blue-700;
 }
+
+.message-card {
+  align-self: start;
+  border-radius: 8px;
+  min-width: 66%;
+}
+
+.message-card:nth-of-type(2n) {
+  align-self: end;
+  background-color: rgb(250, 255, 238);
+}

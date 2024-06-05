@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
+const mongoose = require('mongoose');
 
 const passport = require('../middleware/passport');
 const User = require('../models/user');
@@ -161,3 +162,37 @@ exports.user_membership_post = [
     return res.redirect('/');
   }),
 ];
+
+exports.user_admin_get = asyncHandler(async (req, res) => {
+  if (!req.isAuthenticated() || !req.user.isAdmin) {
+    return res.redirect('/');
+  }
+
+  const users = await User.find().exec();
+  return res.render('admin', { title: 'Admin', users });
+});
+
+exports.user_admin_post = asyncHandler(async (req, res, next) => {
+  if (!req.isAuthenticated || !req.user.isAdmin) {
+    return res.redirect('/');
+  }
+
+  const { changes } = req.body;
+  const operations = changes.map((change) => {
+    const { id, field, value } = change;
+    return {
+      updateOne: { filter: { _id: id }, update: { $set: { [field]: value } } },
+    };
+  });
+
+  const session = await mongoose.startSession();
+  try {
+    await session.withTransaction(async () => {
+      await User.bulkWrite(operations);
+    });
+    res.redirect('/');
+  } catch (err) {
+    next(err);
+  }
+  return session.endSession();
+});

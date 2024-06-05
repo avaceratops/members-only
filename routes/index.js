@@ -16,6 +16,9 @@ router.post('/register', userController.user_create_post);
 router.get('/membership', userController.user_membership_get);
 router.post('/membership', userController.user_membership_post);
 
+router.get('/admin', userController.user_admin_get);
+router.post('/admin', userController.user_admin_post);
+
 router.get('/login', userController.user_login_get);
 router.post('/login', userController.user_login_post);
 

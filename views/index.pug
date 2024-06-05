@@ -5,7 +5,9 @@ include mixins/anchorButton
 block content
   +anchorButton('Add new message', '/add-message', 'blue')
   if currentUser && !currentUser.isMember
-    +anchorButton('Become a member', '/membership', 'slate').ml-2
+    +anchorButton('Become a member', '/membership', 'indigo').ml-2
+  if currentUser && currentUser.isAdmin
+    +anchorButton('Admin controls', '/admin', 'indigo').ml-2
 
   if !messages.length
     p.mt-16.text-center There are no messages.

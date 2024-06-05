@@ -1,0 +1,14 @@
+mixin adminCheckbox(labelText, inputName, isChecked, userId, fieldName)
+  p.checkbox-container.grid.gap-2(
+    class='grid-cols-[fit-content(theme(spacing.32))_1em]'
+  )
+    label.font-semibold(for=inputName)= labelText
+    input.mt-0(
+      type='checkbox',
+      name=inputName,
+      id=inputName,
+      checked=isChecked,
+      value=isChecked ? 1 : 0,
+      data-id=userId,
+      data-field=fieldName
+    )

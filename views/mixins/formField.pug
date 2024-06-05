@@ -2,7 +2,7 @@ mixin formField(labelText, inputType, inputName, object, errors)
   label.grow.font-semibold(for=inputName)
     | #{ labelText }
 
-    if !attributes.required
+    if !attributes.required && inputType !== 'checkbox'
       span.font-medium.text-zinc-500(aria-hidden='true') &nbsp;(optional)
 
     if inputType === 'select'

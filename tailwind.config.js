@@ -12,6 +12,9 @@ module.exports = {
           },
         ],
       },
+      gridTemplateColumns: {
+        admin: 'repeat(3, fit-content(theme(spacing.32)))',
+      },
     },
   },
   plugins: [],

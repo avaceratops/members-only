@@ -15,10 +15,13 @@ block content
     section.message-container.mt-4.flex.flex-col.gap-6
       each message in messages
         article.message-card.bg-white.p-4.shadow-lg
-          h2.font-semibold= message.title
-          p= message.msg
+          h2.message-title.font-semibold= message.title
+          if currentUser && currentUser.isAdmin
+            button.delete-btn.justify-self-end(data-id=message.id) ❌
+          p.message-msg= message.msg
 
           if currentUser && currentUser.isMember
-            footer.author.mt-2.justify-between.text-sm.text-zinc-500(class='sm:flex')
-              span Posted by #{ message.author.fullName }&nbsp;
-              time.block= message.timestamp_formatted
+            span.message-author.mt-2.text-sm.text-zinc-500 Posted by #{ message.author.fullName }&nbsp;
+            time.message-timestamp.mt-2.block.justify-self-end.text-sm.text-zinc-500= message.timestamp_formatted
+
+    script(src='/js/deleteMessage.js')

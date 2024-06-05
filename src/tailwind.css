@@ -45,10 +45,45 @@ a:hover {
 .message-card {
   align-self: start;
   border-radius: 8px;
+  display: grid;
+  grid-template:
+    'title delete'
+    'msg msg'
+    'author timestamp' / 1fr 1fr;
   min-width: 66%;
 }
 
 .message-card:nth-of-type(2n) {
   align-self: end;
   background-color: rgb(250, 255, 238);
+}
+
+.message-title {
+  grid-area: title;
+}
+
+.message-msg {
+  grid-area: msg;
+}
+
+.message-author {
+  grid-area: author;
+}
+
+.message-timestamp {
+  grid-area: timestamp;
+}
+
+@media (max-width: 440px) {
+  .message-card {
+    grid-template:
+      'title delete'
+      'msg msg'
+      'author author'
+      'timestamp timestamp' / 1fr 1fr;
+  }
+
+  .message-timestamp {
+    justify-self: start;
+  }
 }

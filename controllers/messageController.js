@@ -51,3 +51,15 @@ exports.message_create_post = [
     return res.redirect('/');
   }),
 ];
+
+exports.message_delete_post = asyncHandler(async (req, res, next) => {
+  if (!req.isAuthenticated() || !req.user.isAdmin) return;
+
+  const { id } = req.body;
+  try {
+    await Message.findByIdAndDelete(id);
+  } catch (err) {
+    next(err);
+  }
+  res.redirect('/');
+});

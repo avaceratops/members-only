@@ -3,11 +3,12 @@ extends layout
 include mixins/anchorButton
 
 block content
-  +anchorButton('Add new message', '/add-message', 'blue')
-  if currentUser && !currentUser.isMember
-    +anchorButton('Become a member', '/membership', 'indigo').ml-2
-  if currentUser && currentUser.isAdmin
-    +anchorButton('Admin controls', '/admin', 'indigo').ml-2
+  .btn-container.flex.flex-col.items-start.gap-2(class='sm:flex-row')
+    +anchorButton('Add new message', '/add-message', 'blue')
+    if currentUser && !currentUser.isMember
+      +anchorButton('Become a member', '/membership', 'indigo')
+    if currentUser && currentUser.isAdmin
+      +anchorButton('Admin controls', '/admin', 'indigo')
 
   if !messages.length
     p.mt-16.text-center There are no messages.

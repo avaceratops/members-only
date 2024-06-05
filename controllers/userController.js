@@ -115,3 +115,46 @@ exports.user_logout = (req, res, next) => {
     return res.redirect('/');
   });
 };
+
+exports.user_membership_get = (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect('/login');
+  }
+  if (req.user.isMember) {
+    return res.redirect('/');
+  }
+  return res.render('membership', { title: 'Membership' });
+};
+
+exports.user_membership_post = [
+  body('membershipPassword')
+    .custom((value) => value === process.env.MEMBERSHIP_PASSWORD)
+    .withMessage('Incorrect answer'),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!req.isAuthenticated()) {
+      return res.redirect('/login');
+    }
+
+    if (!errors.isEmpty()) {
+      return res.render('membership', {
+        title: 'Membership',
+        errors: errors.mapped(),
+      });
+    }
+
+    try {
+      const updatedUser = await User.findByIdAndUpdate(req.user._id, {
+        $set: { isMember: true },
+      });
+      if (!updatedUser) {
+        throw new Error('Unable to update membership');
+      }
+    } catch (err) {
+      next(err);
+    }
+    return res.redirect('/');
+  }),
+];

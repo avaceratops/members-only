@@ -9,6 +9,7 @@ const UserSchema = new Schema({
   surname: { type: String, required: true },
   email: { type: String, required: true },
   isMember: { type: Boolean, default: false },
+  isAdmin: { type: Boolean, default: false },
   joinDate: { type: Date, immutable: true, default: Date.now },
 });
 

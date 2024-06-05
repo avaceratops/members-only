@@ -15,7 +15,10 @@ const passwordValidation = (fieldName) =>
     .withMessage('Password does not contain a number');
 
 exports.user_create_get = (req, res) => {
-  res.render('register', { title: 'Register' });
+  if (req.isAuthenticated()) {
+    return res.redirect('/');
+  }
+  return res.render('register', { title: 'Register' });
 };
 
 exports.user_create_post = [

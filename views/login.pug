@@ -1,5 +1,6 @@
 extends layout
 
+include mixins/anchorButton
 include mixins/formField
 include mixins/submitButton
 
@@ -11,4 +12,6 @@ block content
         required
       )
 
-      +submitButton('Log in', 'submit', 'blue').col-span-2
+      .btn-container.col-span-2.flex.flex-col.gap-2
+        +submitButton('Log in', 'submit', 'blue')
+        +anchorButton('Log in as guest', '/login-guest', 'indigo')

@@ -113,6 +113,38 @@ exports.user_login_post = (req, res, next) => {
   })(req, res, next);
 };
 
+exports.user_login_guest = asyncHandler(async (req, res, next) => {
+  if (req.isAuthenticated()) {
+    res.redirect('/');
+    return;
+  }
+
+  try {
+    let guestUser = await User.findOne({
+      username: process.env.GUEST_USERNAME,
+    });
+
+    if (!guestUser) {
+      guestUser = new User({
+        username: process.env.GUEST_USERNAME,
+        password: process.env.GUEST_PASSWORD,
+        email: 'me@me.com',
+        forename: 'Guest',
+        surname: 'User',
+        isMember: true,
+      });
+      await guestUser.save();
+    }
+
+    req.login(guestUser, (err) => {
+      if (err) return next(err);
+      return res.redirect('/');
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 exports.user_logout = (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);

@@ -5,9 +5,9 @@ include mixins/anchorButton
 block content
   .btn-container.flex.flex-col.items-start.gap-2(class='sm:flex-row')
     +anchorButton('Add new message', '/add-message', 'blue')
-    if currentUser && !currentUser.isMember
+    if currentUser && !currentUser.is_member
       +anchorButton('Become a member', '/membership', 'indigo')
-    if currentUser && currentUser.isAdmin
+    if currentUser && currentUser.is_admin
       +anchorButton('Admin controls', '/admin', 'indigo')
 
   if !messages.length
@@ -17,12 +17,12 @@ block content
       each message in messages
         article.message-card.bg-white.p-4.shadow-lg
           h2.message-title.font-semibold= message.title
-          if currentUser && currentUser.isAdmin
+          if currentUser && currentUser.is_admin
             button.delete-btn.justify-self-end(data-id=message.id) ❌
           p.message-msg= message.msg
 
-          if currentUser && currentUser.isMember
-            span.message-author.mt-2.text-sm.text-zinc-500 Posted by #{ message.author.fullName }&nbsp;
+          if currentUser && currentUser.is_member
+            span.message-author.mt-2.text-sm.text-zinc-500 Posted by #{ `${message.forename} ${message.surname}` }&nbsp;
             time.message-timestamp.mt-2.block.justify-self-end.text-sm.text-zinc-500= message.timestamp_formatted
 
     script(src='/js/deleteMessage.js')

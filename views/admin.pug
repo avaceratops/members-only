@@ -5,12 +5,12 @@ include mixins/submitButton
 
 block content
   section.mx-auto.flex.w-fit.rounded-lg.bg-white.p-4
-    form.grid-cols-admin.grid.gap-x-8(method='POST')
+    form.grid.grid-cols-admin.gap-x-8(method='POST')
       if users && users.length
         each user in users 
           span.mr-10= user.username
-          +adminCheckbox('Member', `${user.id}_member`, user.isMember, user.id, 'isMember')
-          +adminCheckbox('Admin', `${user.id}_admin`, user.isAdmin, user.id, 'isAdmin')
+          +adminCheckbox('Member', `${user.id}_member`, user.is_member, user.id, 'is_member')
+          +adminCheckbox('Admin', `${user.id}_admin`, user.is_admin, user.id, 'is_admin')
         +submitButton('Save changes', 'submit', 'blue').col-span-3.mt-4
       else
         p.col-span-3 No users found.

@@ -1,10 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
-const mongoose = require('mongoose');
-
 const passport = require('../middleware/passport');
-const User = require('../models/user');
+const db = require('../db/queries');
 
 const passwordValidation = (fieldName) =>
   body(fieldName)
@@ -28,7 +26,7 @@ exports.user_create_post = [
     .isLength({ min: 3 })
     .withMessage('Username must contain at least 3 characters')
     .custom(async (value) => {
-      const existingUser = await User.findOne({ username: value });
+      const existingUser = await db.getUserByUsername(value);
       if (existingUser) {
         throw new Error('An account with that username already exists');
       }
@@ -46,7 +44,7 @@ exports.user_create_post = [
     .isEmail()
     .withMessage('Invalid email address')
     .custom(async (value) => {
-      const existingUser = await User.findOne({ email: value });
+      const existingUser = await db.getUserByEmail(value);
       if (existingUser) {
         throw new Error('An account with that email already exists');
       }
@@ -62,12 +60,11 @@ exports.user_create_post = [
     const errors = validationResult(req);
     const { username, forename, surname, email, password, passwordConfirm } =
       req.body;
-    const user = new User({ username, forename, surname, email, password });
 
     if (!errors.isEmpty()) {
       return res.render('register', {
         title: 'Register',
-        user,
+        user: { username, forename, surname, email, password },
         passwordConfirm,
         errors: errors.mapped(),
       });
@@ -76,8 +73,7 @@ exports.user_create_post = [
     try {
       bcrypt.hash(password, 12, async (err, hashedPassword) => {
         if (err) throw new Error(err);
-        user.password = hashedPassword;
-        await user.save();
+        await db.insertUser(username, hashedPassword, email, forename, surname);
       });
     } catch (err) {
       next(err);
@@ -120,20 +116,16 @@ exports.user_login_guest = asyncHandler(async (req, res, next) => {
   }
 
   try {
-    let guestUser = await User.findOne({
-      username: process.env.GUEST_USERNAME,
-    });
-
+    let guestUser = await db.getUserByUsername(process.env.GUEST_USERNAME);
     if (!guestUser) {
-      guestUser = new User({
-        username: process.env.GUEST_USERNAME,
-        password: process.env.GUEST_PASSWORD,
-        email: 'me@me.com',
-        forename: 'Guest',
-        surname: 'User',
-        isMember: true,
-      });
-      await guestUser.save();
+      guestUser = await db.insertUser(
+        process.env.GUEST_USERNAME,
+        process.env.GUEST_PASSWORD,
+        'me@me.com',
+        'Guest',
+        'User',
+        true
+      );
     }
 
     req.login(guestUser, (err) => {
@@ -156,7 +148,7 @@ exports.user_membership_get = (req, res) => {
   if (!req.isAuthenticated()) {
     return res.redirect('/login');
   }
-  if (req.user.isMember) {
+  if (req.user.is_member) {
     return res.redirect('/');
   }
   return res.render('membership', { title: 'Membership' });
@@ -182,9 +174,7 @@ exports.user_membership_post = [
     }
 
     try {
-      const updatedUser = await User.findByIdAndUpdate(req.user._id, {
-        $set: { isMember: true },
-      });
+      const updatedUser = await db.updateUserMembership(req.user.id);
       if (!updatedUser) {
         throw new Error('Unable to update membership');
       }
@@ -196,35 +186,29 @@ exports.user_membership_post = [
 ];
 
 exports.user_admin_get = asyncHandler(async (req, res) => {
-  if (!req.isAuthenticated() || !req.user.isAdmin) {
+  if (!req.isAuthenticated() || !req.user.is_admin) {
     return res.redirect('/');
   }
 
-  const users = await User.find().exec();
+  const users = await db.getAllUsers();
   return res.render('admin', { title: 'Admin', users });
 });
 
 exports.user_admin_post = asyncHandler(async (req, res, next) => {
-  if (!req.isAuthenticated || !req.user.isAdmin) {
+  const { changes } = req.body;
+  if (
+    !req.isAuthenticated ||
+    !req.user.is_admin ||
+    !Array.isArray(changes) ||
+    changes.length === 0
+  ) {
     return res.redirect('/');
   }
 
-  const { changes } = req.body;
-  const operations = changes.map((change) => {
-    const { id, field, value } = change;
-    return {
-      updateOne: { filter: { _id: id }, update: { $set: { [field]: value } } },
-    };
-  });
-
-  const session = await mongoose.startSession();
   try {
-    await session.withTransaction(async () => {
-      await User.bulkWrite(operations);
-    });
-    res.redirect('/');
+    await db.updateUserFields(changes);
   } catch (err) {
-    next(err);
+    return next(err);
   }
-  return session.endSession();
+  return res.redirect('/');
 });

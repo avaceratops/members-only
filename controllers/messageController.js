@@ -1,15 +1,10 @@
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
-
-const Message = require('../models/message');
-const User = require('../models/user');
+const db = require('../db/queries');
 
 // display list of all messages
 exports.message_list = asyncHandler(async (req, res) => {
-  const messages = await Message.find()
-    .populate('author', 'username forename surname')
-    .sort({ timestamp: -1 })
-    .exec();
+  const messages = await db.getAllMessages();
   res.render('index', { title: 'MessageBoard', messages });
 });
 
@@ -36,30 +31,26 @@ exports.message_create_post = [
       return res.redirect('/login');
     }
 
-    const author = await User.findById(req.user._id);
-    const message = new Message({ author, title, msg });
-
     if (!errors.isEmpty()) {
       return res.render('addMessage', {
         title: 'Add new message',
-        message,
+        message: { title, msg },
         errors: errors.mapped(),
       });
     }
 
-    await message.save();
+    await db.insertMessage(req.user.id, title, msg);
     return res.redirect('/');
   }),
 ];
 
-exports.message_delete_post = asyncHandler(async (req, res, next) => {
-  if (!req.isAuthenticated() || !req.user.isAdmin) return;
+exports.message_delete_post = asyncHandler(async (req, res) => {
+  if (!req.isAuthenticated() || !req.user.is_admin) return;
 
-  const { id } = req.body;
   try {
-    await Message.findByIdAndDelete(id);
+    await db.deleteMessage(req.body.id);
+    res.status(200).json({ success: true });
   } catch (err) {
-    next(err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-  res.redirect('/');
 });

@@ -4,6 +4,8 @@ const deleteBtns = document.querySelectorAll('button.delete-btn');
 const handleClick = async (e) => {
   const { id } = e.target.dataset;
 
+  console.log(id);
+
   try {
     const response = await fetch('/delete-message', {
       method: 'POST',
